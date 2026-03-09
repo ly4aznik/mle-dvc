@@ -7,7 +7,7 @@ from sklearn.compose import ColumnTransformer
 from sklearn.pipeline import Pipeline
 from category_encoders import CatBoostEncoder
 from sklearn.preprocessing import StandardScaler, OneHotEncoder
-from catboost import CatBoostClassifier
+from sklearn.linear_model import LogisticRegression
 
 import joblib
 import json
@@ -27,7 +27,8 @@ def evaluate_model():
     n_splits = params["n_splits"]
     metrics = params["metrics"]
     one_hot_drop = params["one_hot_drop"]
-    auto_class_weights = params["auto_class_weights"]
+    C = params["C"]
+    penalty = params["penalty"]
     # загрузите результат прошлого шага: fitted_model.pkl
     model = joblib.load("models/fitted_model.pkl")
     # реализуйте основную логику шага с использованием прочтённых гиперпараметров
@@ -52,7 +53,7 @@ def evaluate_model():
             ),
             (
                 "cat",
-                CatBoostEncoder(return_df=False),
+                OneHotEncoder(handle_unknown="ignore"),
                 other_cat_features.columns.tolist()
             ),
             (
@@ -61,16 +62,16 @@ def evaluate_model():
                 num_features.columns.tolist()
             )
         ],
-        remainder="drop",
-        verbose_feature_names_out=False
-    )
+    remainder="drop",
+    verbose_feature_names_out=False
+)
 
-    model = CatBoostClassifier(
-        auto_class_weights=auto_class_weights,
-        verbose=0,
-        random_state=42
+    model = LogisticRegression(
+        C=C,
+        penalty=penalty,
+        random_state=42,
+        max_iter=1000
     )
-
     pipeline = Pipeline(
         [
             ("preprocessor", preprocessor),

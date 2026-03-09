@@ -9,7 +9,7 @@ from sklearn.compose import ColumnTransformer
 from sklearn.pipeline import Pipeline
 from category_encoders import CatBoostEncoder
 from sklearn.preprocessing import StandardScaler, OneHotEncoder
-from catboost import CatBoostClassifier
+from sklearn.linear_model import LogisticRegression
 
 
 def fit_model():
@@ -20,7 +20,8 @@ def fit_model():
     index_col = params["index_col"]
     target_col = params["target_col"]
     one_hot_drop = params["one_hot_drop"]
-    auto_class_weights = params["auto_class_weights"]
+    C = params["C"]
+    penalty = params["penalty"]
 
     # загрузите результат предыдущего шага: initial_data.csv
     data = pd.read_csv("data/initial_data.csv")
@@ -59,10 +60,12 @@ def fit_model():
         verbose_feature_names_out=False
     )
 
-    model = CatBoostClassifier(
-        auto_class_weights=auto_class_weights,
-        verbose=0,
-        random_state=42
+
+    model = LogisticRegression(
+        C=C,
+        penalty=penalty,
+        random_state=42,
+        max_iter=1000
     )
 
     pipeline = Pipeline(
