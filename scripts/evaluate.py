@@ -2,6 +2,13 @@
 
 import pandas as pd
 from sklearn.model_selection import StratifiedKFold, cross_validate
+
+from sklearn.compose import ColumnTransformer
+from sklearn.pipeline import Pipeline
+from category_encoders import CatBoostEncoder
+from sklearn.preprocessing import StandardScaler, OneHotEncoder
+from catboost import CatBoostClassifier
+
 import joblib
 import json
 import yaml
@@ -24,7 +31,7 @@ def evaluate_model():
     # загрузите результат прошлого шага: fitted_model.pkl
     model = joblib.load("models/fitted_model.pkl")
     # реализуйте основную логику шага с использованием прочтённых гиперпараметров
-    data = pd.read_csv("data/initial_data.csv", index_col=index_col)
+    data = pd.read_csv("data/initial_data.csv")
 
     X = data.drop(columns=[target_col])
     y = data[target_col]

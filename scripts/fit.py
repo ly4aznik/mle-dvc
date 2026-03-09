@@ -23,7 +23,7 @@ def fit_model():
     auto_class_weights = params["auto_class_weights"]
 
     # загрузите результат предыдущего шага: initial_data.csv
-    data = pd.read_csv("data/initial_data.csv", index_col=index_col)
+    data = pd.read_csv("data/initial_data.csv")
 
     # разделите данные на признаки и целевую переменную
     X = data.drop(columns=[target_col])
